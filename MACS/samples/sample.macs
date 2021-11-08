@@ -1,12 +1,30 @@
+//use Integrated Block and Item Dictionary
+use IBID
 
+// Map<String,Map<Symbol,List<MCObj>|MCObj>> IBID.dic
+// type MCObj <- Item|Block|Entity
+
+//fromNS returns Map<Symbol,List<MCObj>|MCObj>
+let mc <- IBID.fromNS("minecraft")
+//(using String.split -> List<String>, String.intern -> Symbol(String.intern is equivalence with :String opr(Give care to it isn't equivalence with :String opr if Symbol(String) constructor)))
+
+//fromID returns List<MCObj>|MCObj
+//fromID: "ns:id" style (if specified by "id" style, it will be converted to "ns:id" style, that has namespace of "minecraft", default-ly)
+//(using String.intern -> Symbol)
+
+let diolite <- item[mc.stone[3]]
 
 //items IO through Connector to AutoCraft pipeline
 let ds1 <- con[in] := item[auto]
-let ds1 <- con[out] := item[auto]
+let ds2 <- con[out] := diolite
+let dsE <- con[out] := item[auto]
 
+//pattern matching of minecraft objects on AutoCraft pipeline
 ds1::match[item]
-||item[] => set ds3;
-||item[] => set ds4;
-|| _ => nop;
+||item[mc.quartz] => set ds3
+||item[mc.cobblestone] => set ds4
+|| _ => set dsE
 end
-(ds3, ds1)::craft[item[]]
+
+//Binding of AutoCraft Pipelines, and craft quartz and cobblestone to diolite between AutoCraft pipelines
+(ds3, ds1)::craft[diolite] => set ds2
