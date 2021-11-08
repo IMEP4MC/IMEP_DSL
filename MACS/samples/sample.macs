@@ -1,0 +1,12 @@
+
+
+//items IO through Connector to AutoCraft pipeline
+let ds1 <- con[in] := item[auto]
+let ds1 <- con[out] := item[auto]
+
+ds1::match[item]
+||item[] => set ds3;
+||item[] => set ds4;
+|| _ => nop;
+end
+(ds3, ds1)::craft[item[]]
